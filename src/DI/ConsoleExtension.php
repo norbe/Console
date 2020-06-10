@@ -198,7 +198,6 @@ class ConsoleExtension extends \Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		if (PHP_SAPI === ConsoleApplication::CLI_SAPI) {
-			\Tracy\Debugger::log($e);
 			$builder->getDefinition($builder->getByType(NetteApplication::class) ?: 'application')
 				->addSetup('$self = $this; $service->onError[] = function ($app, $e) use ($self) {' . "\n" .
 					"\t" . '$app->errorPresenter = ?;' . "\n" .
