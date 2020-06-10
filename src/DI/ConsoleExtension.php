@@ -190,7 +190,14 @@ class ConsoleExtension extends \Nette\DI\CompilerExtension
 			$builder->getDefinition($builder->getByType(NetteApplication::class) ?: 'application')
 				->addSetup('$self = $this; $service->onError[] = function ($app, $e) use ($self) {' . "\n" .
 					"\t" . '$app->errorPresenter = ?;' . "\n" .
-					"\t" . '$app->onShutdown[] = function () { exit(?); };' . "\n" .
+					"\t" . '$app->onShutdown[] = function () use($e) {' . "\n" .
+					"\t" . '$file = \Tracy\Debugger::log($e);' . "\n" .
+					"\t\t" . 'if ($file !== NULL) {' . "\n" .
+					"\t\t\t" . '$output = new \Symfony\Component\Console\Output\ConsoleOutput(); ' . "\n" .
+					"\t\t\t" . '$output->writeln(sprintf("<error>  (Tracy output was stored in %s)  </error>", basename($file)));' . "\n" .
+					"\t\t\t" . '$output->writeln("");' . "\n" .
+					"\t\t" . '}' . "\n" .
+					"\t" . ' exit(?); };' . "\n" .
 					'}', [FALSE, 254]);
 		}
 
